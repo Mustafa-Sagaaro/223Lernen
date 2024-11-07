@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prüfung: Authentifizierung und Software-Testing</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      display: none;
+    }
+    h1, h2 {
+      color: #1a73e8;
+    }
+    .menu {
+      text-align: center;
+      padding: 20px;
+    }
+    .question {
+      margin: 20px 0;
+    }
+    .choices {
+      margin: 10px 0;
+    }
+    label {
+      display: block;
+      margin: 5px 0;
+    }
+    .button {
+      margin: 20px 0;
+      padding: 10px 20px;
+      background-color: #1a73e8;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 10px;
+      font-weight: bold;
+      color: #1a73e8;
+    }
+    .merkblatt {
+      display: none;
+      padding: 20px;
+      background-color: #f1f1f1;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Start Menu -->
+<div class="menu">
+  <h1>Prüfung: Authentifizierung und Software-Testing</h1>
+  <button class="button" onclick="startQuiz()">Quiz starten</button>
+  <button class="button" onclick="showMerkblatt()">Merkblatt anzeigen</button>
+</div>
+
+<!-- Quiz Container -->
+<div id="quizContainer" class="container">
+  <div id="questionContainer" class="question"></div>
+  <div id="choicesContainer" class="choices"></div>
+  <button class="button" onclick="nextQuestion()">Nächste Frage</button>
+</div>
+
+<!-- Result -->
+<div id="result" class="result"></div>
+
+<!-- Merkblatt -->
+<div id="merkblatt" class="merkblatt">
+  <h2>Merkblatt: Authentifizierung und Software-Testing</h2>
+  <p><strong>Authentifizierung:</strong> Beweist die Identität eines Benutzers, z.B. durch ein Passwort.</p>
+  <p><strong>Autorisierung:</strong> Erlaubt den Zugang zu bestimmten Ressourcen, wenn der Benutzer berechtigt ist.</p>
+  <p><strong>OAuth:</strong> Standard zur Autorisierung, der Access Tokens verwendet.</p>
+  <p><strong>JWT:</strong> JSON Web Token, das zur Authentifizierung und Autorisierung verwendet wird.</p>
+  <p><strong>Unit-Tests:</strong> Testen einzelne Komponenten isoliert.</p>
+  <p><strong>Integrationstests:</strong> Testen das Zusammenspiel mehrerer Komponenten.</p>
+  <p><strong>Systemtests:</strong> Testen das gesamte System.</p>
+  <p><strong>End-to-End-Tests:</strong> Simulieren Benutzerinteraktionen von Anfang bis Ende.</p>
+  <p><strong>Mocks:</strong> Simulierte Objekte, die reale Abhängigkeiten in Tests ersetzen.</p>
+  <p><strong>Code Coverage:</strong> Prozentsatz des Codes, der durch Tests abgedeckt wird.</p>
+  <button class="button" onclick="returnToMenu()">Zurück zum Menü</button>
+</div>
+
+<script>
+  const questions = [
+    {
+      type: "multiple",
+      question: "Was ist Authentisierung?",
+      choices: [
+        { text: "Die Überprüfung, ob die Informationen korrekt sind.", correct: false },
+        { text: "Der Beweis, dass man die Person ist, die man vorgibt zu sein.", correct: true },
+        { text: "Die Erlaubnis, eine Ressource zu nutzen.", correct: false }
+      ]
+    },
+    {
+      type: "multiple",
+      question: "Was bedeutet Autorisierung?",
+      choices: [
+        { text: "Der Beweis, dass man die Person ist.", correct: false },
+        { text: "Die Erlaubnis, auf eine Ressource zuzugreifen.", correct: true },
+        { text: "Die Prüfung, ob die Informationen authentisch sind.", correct: false }
+      ]
+    },
+    {
+      type: "text",
+      question: "Was beschreibt der Begriff 'Code Coverage'?",
+      answer: "Der Prozentsatz des Codes, der durch Tests abgedeckt ist."
+    },
+    {
+      type: "multiple",
+      question: "Welcher Token wird verwendet, um ein neues Access Token zu erhalten?",
+      choices: [
+        { text: "Session Token", correct: false },
+        { text: "JWT Token", correct: false },
+        { text: "Refresh Token", correct: true }
+      ]
+    },
+    {
+      type: "text",
+      question: "Erkläre den Begriff 'Mocks' in Tests.",
+      answer: "Simulierte Objekte, die reale Abhängigkeiten ersetzen."
+    },
+    {
+      type: "multiple",
+      question: "Was ist ein Unit-Test?",
+      choices: [
+        { text: "Ein Test der gesamten Anwendung.", correct: false },
+        { text: "Ein Test einer einzelnen Komponente.", correct: true },
+        { text: "Ein Test des Zusammenspiels von Komponenten.", correct: false }
+      ]
+    },
+    {
+      type: "multiple",
+      question: "Welcher Test simuliert Benutzerinteraktionen von Anfang bis Ende?",
+      choices: [
+        { text: "End-to-End-Test", correct: true },
+        { text: "Unit-Test", correct: false },
+        { text: "Integrationstest", correct: false }
+      ]
+    },
+    {
+      type: "multiple",
+      question: "Wofür steht JWT?",
+      choices: [
+        { text: "Java Web Token", correct: false },
+        { text: "JavaScript Web Token", correct: false },
+        { text: "JSON Web Token", correct: true }
+      ]
+    },
+    {
+      type: "text",
+      question: "Was ist OAuth?",
+      answer: "Ein Standard zur Autorisierung, der Tokens verwendet."
+    },
+    {
+      type: "multiple",
+      question: "Was ist der Zweck von Integrationstests?",
+      choices: [
+        { text: "Einzelne Funktionen zu testen", correct: false },
+        { text: "Das Zusammenspiel mehrerer Komponenten zu testen", correct: true },
+        { text: "Benutzerinteraktionen zu simulieren", correct: false }
+      ]
+    }
+  ];
+
+  let shuffledQuestions = [], currentQuestionIndex = 0, score = 0;
+  let answersLog = [];
+
+  function startQuiz() {
+    document.querySelector('.menu').style.display = 'none';
+    document.getElementById('quizContainer').style.display = 'block';
+    document.getElementById('result').textContent = '';
+    shuffledQuestions = questions.sort(() => Math.random() - 0.5);
+    currentQuestionIndex = 0;
+    score = 0;
+    answersLog = [];
+    showQuestion(shuffledQuestions[currentQuestionIndex]);
+  }
+
+  function showMerkblatt() {
+    document.querySelector('.menu').style.display = 'none';
+    document.getElementById('merkblatt').style.display = 'block';
+  }
+
+  function showQuestion(question) {
+    const questionContainer = document.getElementById('questionContainer');
+    const choicesContainer = document.getElementById('choicesContainer');
+    
+    questionContainer.innerHTML = `<h3>${question.question}</h3>`;
+    choicesContainer.innerHTML = '';
+
+    if (question.type === "multiple") {
+      question.choices.forEach((choice, index) => {
+        const choiceLabel = document.createElement('label');
+        choiceLabel.innerHTML = `<input type="radio" name="choice" value="${index}"> ${choice.text}`;
+        choicesContainer.appendChild(choiceLabel);
+      });
+    } else if (question.type === "text") {
+      const inputField = document.createElement('input');
+      inputField.type = "text";
+      inputField.name = "textAnswer";
+      inputField.style.width = "100%";
+      choicesContainer.appendChild(inputField);
+    }
+  }
+
+  function nextQuestion() {
+    const currentQuestion = shuffledQuestions[currentQuestionIndex];
+    let correct = false;
+    
+    if (currentQuestion.type === "multiple") {
+      const selectedChoice = document.querySelector('input[name="choice"]:checked');
+      if (!selectedChoice) {
+        alert('Bitte wähle eine Antwort aus.');
+        return;
+      }
+      const choiceIndex = selectedChoice.value;
+      correct = currentQuestion.choices[choiceIndex].correct;
+    } else if (currentQuestion.type === "text") {
+      const textAnswer = document.querySelector('input[name="textAnswer"]').value.trim();
+      if (!textAnswer) {
+        alert('Bitte gib eine Antwort ein.');
+        return;
+      }
+      correct = textAnswer.toLowerCase() === currentQuestion.answer.toLowerCase();
+    }
+    
+    if (correct) score++;
+    answersLog.push({ question: currentQuestion.question, correct });
+
+    currentQuestionIndex++;
+    if (currentQuestionIndex < shuffledQuestions.length) {
+      showQuestion(shuffledQuestions[currentQuestionIndex]);
+    } else {
+      endQuiz();
+    }
+  }
+
+  function endQuiz() {
+    document.getElementById('quizContainer').style.display = 'none';
+    let resultText = `Dein Ergebnis: ${score} von ${shuffledQuestions.length} richtigen Antworten.<br>`;
+    resultText += '<h3>Details:</h3><ul>';
+    answersLog.forEach((entry, index) => {
+      resultText += `<li>${index + 1}. ${entry.question} - ${entry.correct ? "Richtig" : "Falsch"}</li>`;
+    });
+    resultText += '</ul>';
+    document.getElementById('result').innerHTML = resultText;
+    document.getElementById('result').style.display = 'block';
+  }
+
+  function returnToMenu() {
+    document.querySelector('.menu').style.display = 'block';
+    document.getElementById('merkblatt').style.display = 'none';
+    document.getElementById('quizContainer').style.display = 'none';
+    document.getElementById('result').style.display = 'none';
+  }
+</script>
+
+</body>
+</html>
