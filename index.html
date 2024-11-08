@@ -53,15 +53,6 @@
       background-color: #007bff;
       width: 0%;
     }
-    .timer {
-      font-size: 18px;
-      color: #ff4c4c;
-      text-align: right;
-      margin-bottom: 10px;
-    }
-    .review {
-      display: none;
-    }
   </style>
 </head>
 <body>
@@ -72,7 +63,6 @@
 </div>
 
 <div id="quizContainer" class="container">
-  <div class="timer" id="timer"></div>
   <div class="progress-bar">
     <div class="progress" id="progress"></div>
   </div>
@@ -85,92 +75,83 @@
 <script>
   const questions = [
     {
-      type: "fill-in-the-blank",
       question: `Ergänze die Annotation für eine GET-Methode im Controller:<br>
       <pre>@GET
-@Produces(<input type="text" id="q0" size="30">)
+@Produces(<input type="text" id="answerInput" size="30">)
 public List&lt;EntryDTO&gt; getAllEntries() { return entryService.findAll(); }</pre>`,
       correctAnswer: "MediaType.APPLICATION_JSON"
     },
     {
-      type: "fill-in-the-blank",
       question: `Ergänze die Methode, um ein neues Entry in der Datenbank zu speichern:<br>
       <pre>public Entry createEntry(Entry entry) {
-  entityManager.<input type="text" id="q1" size="15">(entry);
+  entityManager.<input type="text" id="answerInput" size="15">(entry);
   return entry;
 }</pre>`,
       correctAnswer: "persist"
     },
     {
-      type: "fill-in-the-blank",
       question: `Ergänze den Code, um ein Entry-Objekt in ein DTO umzuwandeln:<br>
       <pre>private EntryDTO convertToDTO(Entry entry) {
   EntryDTO dto = new EntryDTO();
-  dto.setId(entry.<input type="text" id="q2" size="15">());
+  dto.setId(entry.<input type="text" id="answerInput" size="15">());
   dto.setCheckIn(entry.getCheckIn());
   return dto;
 }</pre>`,
       correctAnswer: "getId"
     },
     {
-      type: "fill-in-the-blank",
       question: `Ergänze die Annotations für eine POST-Methode:<br>
-      <pre>@<input type="text" id="q3" size="10">
+      <pre>@<input type="text" id="answerInput" size="10">
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public EntryDTO createEntry(EntryDTO entryDTO) { }</pre>`,
       correctAnswer: "POST"
     },
     {
-      type: "fill-in-the-blank",
       question: `Ergänze den Controller-Endpunkt, um einen Eintrag nach ID zu löschen:<br>
       <pre>@DELETE
 @Path("/{id}")
-public Response deleteEntry(@PathParam("<input type="text" id="q4" size="5">") Long id) {
+public Response deleteEntry(@PathParam("<input type="text" id="answerInput" size="5">") Long id) {
   boolean deleted = entryService.deleteEntry(id);
   return deleted ? Response.noContent().build() : Response.status(Response.Status.NOT_FOUND).build();
 }</pre>`,
       correctAnswer: "id"
     },
     {
-      type: "fill-in-the-blank",
       question: `Ergänze den Testfall für die Erstellung eines Eintrags:<br>
       <pre>@Test
 public void testCreateEntry() {
   Entry entry = new Entry();
-  entry.setCheckIn(<input type="text" id="q5" size="20">);
+  entry.setCheckIn(<input type="text" id="answerInput" size="20">);
   Entry createdEntry = entryService.createEntry(entry);
   assertNotNull(createdEntry);
-  assertEquals(<input type="text" id="q6" size="20">, createdEntry.getCheckIn());
+  assertEquals(<input type="text" id="answerInput2" size="20">, createdEntry.getCheckIn());
 }</pre>`,
       correctAnswer: "LocalDateTime.now()"
     },
     {
-      type: "fill-in-the-blank",
       question: `Ergänze die Methode im Repository, um Benutzer anhand des Benutzernamens zu finden:<br>
       <pre>public ApplicationUser findByUsername(String username) {
   return em.createQuery("SELECT u FROM ApplicationUser u WHERE u.username = :username", ApplicationUser.class)
-           .setParameter("username", <input type="text" id="q7" size="10">)
+           .setParameter("username", <input type="text" id="answerInput" size="10">)
            .getSingleResult();
 }</pre>`,
       correctAnswer: "username"
     },
     {
-      type: "fill-in-the-blank",
       question: `Ergänze die Bedingungen für die Zeitraumsuche:<br>
       <pre>public List&lt;Entry&gt; findEntriesByDateRange(LocalDateTime start, LocalDateTime end) {
   return entityManager.createQuery(
       "SELECT e FROM Entry e WHERE e.checkIn >= :start AND e.checkOut <= :end", Entry.class)
       .setParameter("start", start)
-      .setParameter("end", <input type="text" id="q8" size="10">)
+      .setParameter("end", <input type="text" id="answerInput" size="10">)
       .getResultList();
 }</pre>`,
       correctAnswer: "end"
     },
     {
-      type: "fill-in-the-blank",
       question: `Ergänze die Transaktions-Annotation, um Änderungen in der Datenbank zu sichern:<br>
-      <pre>@<input type="text" id="q9" size="20">
+      <pre>@<input type="text" id="answerInput" size="20">
 public Entry updateEntry(Long id, Entry updatedEntry) {
   Entry entry = entityManager.find(Entry.class, id);
   entry.setCheckIn(updatedEntry.getCheckIn());
@@ -181,23 +162,35 @@ public Entry updateEntry(Long id, Entry updatedEntry) {
   ];
 
   let currentQuestionIndex = 0, score = 0;
+  const answersLog = [];
 
   function startQuiz() {
     document.querySelector('.menu').style.display = 'none';
     document.getElementById('quizContainer').style.display = 'block';
-    showQuestion(questions[currentQuestionIndex]);
+    showQuestion();
   }
 
-  function showQuestion(question) {
-    document.getElementById('questionContainer').innerHTML = `<h3>Frage ${currentQuestionIndex + 1}</h3><p>${question.question}</p>`;
+  function showQuestion() {
+    const questionData = questions[currentQuestionIndex];
+    document.getElementById('questionContainer').innerHTML = `<h3>Frage ${currentQuestionIndex + 1}</h3><p>${questionData.question}</p>`;
   }
 
   function nextQuestion() {
-    const userAnswer = document.getElementById(`q${currentQuestionIndex}`).value.trim();
-    if (userAnswer === questions[currentQuestionIndex].correctAnswer) score++;
+    const userAnswer = document.getElementById('answerInput').value.trim();
+    const questionData = questions[currentQuestionIndex];
+    const isCorrect = userAnswer === questionData.correctAnswer;
+
+    if (isCorrect) score++;
+    answersLog.push({
+      question: questionData.question,
+      userAnswer: userAnswer,
+      correctAnswer: questionData.correctAnswer,
+      isCorrect: isCorrect
+    });
+
     currentQuestionIndex++;
     if (currentQuestionIndex < questions.length) {
-      showQuestion(questions[currentQuestionIndex]);
+      showQuestion();
     } else {
       endQuiz();
     }
@@ -205,7 +198,17 @@ public Entry updateEntry(Long id, Entry updatedEntry) {
 
   function endQuiz() {
     document.getElementById('quizContainer').style.display = 'none';
-    document.getElementById('result').innerHTML = `Dein Ergebnis: ${score} von ${questions.length} richtigen Antworten.`;
+    let resultHTML = `<h2>Dein Ergebnis: ${score} von ${questions.length} richtigen Antworten.</h2><h3>Überprüfung:</h3><ul>`;
+    answersLog.forEach((entry, index) => {
+      resultHTML += `<li><strong>Frage ${index + 1}:</strong> ${entry.question}<br>`;
+      if (entry.isCorrect) {
+        resultHTML += `Deine Antwort: <span style="color: green;">${entry.userAnswer}</span> - Richtig!</li>`;
+      } else {
+        resultHTML += `Deine Antwort: <span style="color: red;">${entry.userAnswer}</span> - Falsch. Richtige Antwort: <span style="color: blue;">${entry.correctAnswer}</span></li>`;
+      }
+    });
+    resultHTML += "</ul><button class='button' onclick='startQuiz()'>Quiz erneut starten</button>";
+    document.getElementById('result').innerHTML = resultHTML;
     document.getElementById('result').style.display = 'block';
   }
 </script>
